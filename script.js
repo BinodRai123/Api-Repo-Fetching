@@ -1,16 +1,45 @@
 const InputField = document.querySelector(".input-field");
 const SearchBtn = document.querySelector(".search-btn");
 const Main = document.querySelector(".main");
+let errorCard = Main.querySelector("#errorBox");
+
+InputField.addEventListener("keypress", (event) => {
+  if(event.key === 'Enter') {
+    if(InputField.value){
+      let userName = InputField.value.trim();
+      GitUserDetails(userName).then(data => {
+          ShowingDataInCard(data);
+      })
+    }
+    else {
+        alert("Please Write a Name Madarchood...")
+    }
+  }
+})
 
 function GitUserDetails(userName){
-    return fetch(`https://api.github.com/users/${userName}`).then(raw => {
-        if(!raw.ok) throw new Error("User not Found ");
+  return fetch(`https://api.github.com/users/${userName}`).then(raw => {
+        if(!raw.ok) {
+          if(errorCard) {
+            let oldCard = Main.querySelector("#userCard");
+            console.log(oldCard)
+            if(oldCard) Main.removeChild(oldCard);
+
+            errorCard.classList.remove("hidden");
+          }
+          throw new Error("User Not Found...");
+        }
         return raw.json();
     })
 }
 
-function ShowingDataInCard(details){    
-    console.log(details)
+function ShowingDataInCard(details){  
+  if(errorCard) errorCard.classList.add("hidden");
+
+  const oldCard = Main.querySelector("#userCard");
+  console.log(oldCard)
+  if(oldCard) Main.removeChild(oldCard);
+  
     let card = `<div
             id="userCard"
             class="bg-white rounded-2xl shadow-lg p-6 flex gap-6 items-center"
@@ -39,10 +68,11 @@ function ShowingDataInCard(details){
             </div>
           </div>`
 
-    Main.innerHTML = card;
+    Main.insertAdjacentHTML("afterbegin", card);
 }
 
 SearchBtn.addEventListener("click", () => {
+
     if(InputField.value){
         let userName = InputField.value.trim();
         GitUserDetails(userName).then(data => {
@@ -50,12 +80,6 @@ SearchBtn.addEventListener("click", () => {
         })
     }
     else {
-        alert("Please Write a Name Madarchood...")
+      alert("Oops! You forgot to enter a username 😅");
     }
 })
-
-function userRepos(){
-    return fetch('https://api.github.com/users/BinodRai123/repos').then(raw => raw.json());
-}
-
-userRepos().then(data => console.log(data))
