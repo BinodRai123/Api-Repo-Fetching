@@ -3,42 +3,57 @@ const SearchBtn = document.querySelector(".search-btn");
 const Main = document.querySelector(".main");
 let errorCard = Main.querySelector("#errorBox");
 
+//Handling Enter Btn in the input field
 InputField.addEventListener("keypress", (event) => {
   if(event.key === 'Enter') {
-    if(InputField.value){
-      let userName = InputField.value.trim();
-      GitUserDetails(userName).then(data => {
-          ShowingDataInCard(data);
-      })
-    }
-    else {
-        alert("Please Write a Name Madarchood...")
-    }
+    handleUserSearch();
   }
 })
 
-function GitUserDetails(userName){
-  return fetch(`https://api.github.com/users/${userName}`).then(raw => {
-        if(!raw.ok) {
-          if(errorCard) {
-            let oldCard = Main.querySelector("#userCard");
-            console.log(oldCard)
-            if(oldCard) Main.removeChild(oldCard);
+// It handle the User Search and provide result
+function handleUserSearch(){
+  if(InputField.value){
+    let userName = InputField.value.trim();
+    fetchUserDetails(userName).then(data => {
+        ShowingDataInCard(data);
+    })
+  }
+  else {
+    alert("Oops! You forgot to enter a username 😅");
+  }
+}
 
-            errorCard.classList.remove("hidden");
-          }
-          throw new Error("User Not Found...");
-        }
+// Hanlde and Display Error And Clear the Old card to display other Card
+function handleErrorAndClearOldCard(action){
+  if(errorCard) {
+    errorCard.classList[action]("hidden");
+    
+  }
+  
+  const oldCard = Main.querySelector("#userCard");
+  if(oldCard) Main.removeChild(oldCard);
+}
+
+// It handle user not Found Error and throw an error while stopping all the code right there!!
+function handleUserNotFoundAndStop(raw){
+  if(!raw.ok) {
+    handleErrorAndClearOldCard("remove");
+
+    throw new Error("User Not Found...");
+  }
+}
+
+// It fetch the User details
+function fetchUserDetails(userName){
+  return fetch(`https://api.github.com/users/${userName}`).then(raw => {
+        handleUserNotFoundAndStop(raw);
         return raw.json();
     })
 }
 
+//Displaying userDetails in the DOM
 function ShowingDataInCard(details){  
-  if(errorCard) errorCard.classList.add("hidden");
-
-  const oldCard = Main.querySelector("#userCard");
-  console.log(oldCard)
-  if(oldCard) Main.removeChild(oldCard);
+  handleErrorAndClearOldCard("add");
   
     let card = `<div
             id="userCard"
@@ -71,15 +86,7 @@ function ShowingDataInCard(details){
     Main.insertAdjacentHTML("afterbegin", card);
 }
 
+//Handling Search Btn
 SearchBtn.addEventListener("click", () => {
-
-    if(InputField.value){
-        let userName = InputField.value.trim();
-        GitUserDetails(userName).then(data => {
-            ShowingDataInCard(data);
-        })
-    }
-    else {
-      alert("Oops! You forgot to enter a username 😅");
-    }
+  handleUserSearch();
 })
