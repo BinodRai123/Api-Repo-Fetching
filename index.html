@@ -27,6 +27,28 @@
       
           <!-- User Info Card -->
            <div class="main flex flex-col gap-2">
+            <!-- Fun and Stylish Error Message -->
+              <div
+              id="errorBox"
+              class="hidden bg-red-700/90 backdrop-blur-sm border border-red-500 text-white px-6 py-4 rounded-2xl shadow-[0_0_20px_rgba(239,68,68,0.5)] flex items-start gap-4 relative"
+              >
+              <!-- Decorative Emoji -->
+              <div class="text-3xl select-none">😵‍💫</div>
+
+              <!-- Message Content -->
+              <div>
+                <h3 class="text-lg font-bold">Oops! User Not Found</h3>
+                <p class="text-sm text-red-100 mt-1">
+                  That GitHub username doesn't exist. Double-check the spelling and try again!
+                </p>
+              </div>
+
+              <!-- Close Button (if you want to make it dismissible later via JS) -->
+              <button class="absolute top-2 right-2 text-red-200 hover:text-white" aria-label="Dismiss">
+                &times;
+              </button>
+              </div>
+
 
            </div>
         
