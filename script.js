@@ -44,8 +44,8 @@ function handleUserNotFoundAndStop(raw){
 }
 
 // It fetch the User details
-function fetchUserDetails(userName){
-  return fetch(`https://api.github.com/users/${userName}`).then(raw => {
+function fetchUserDetails(username){
+  return fetch(`https://api.github.com/users/${username}`).then(raw => {
         handleUserNotFoundAndStop(raw);
         return raw.json();
     })
@@ -90,3 +90,4 @@ function ShowingDataInCard(details){
 SearchBtn.addEventListener("click", () => {
   handleUserSearch();
 })
+
